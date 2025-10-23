@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+.firebaserc
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.claude/settings.local.json
+.claude/agents/api-documenter.md
+.claude/agents/architect-review.md
+.claude/agents/backend-architect.md
+.claude/agents/code-reviewer.md
+.claude/agents/context-manager.md
+.claude/agents/database-architect.md
+.claude/agents/debugger.md
+.claude/agents/devops-engineer.md
+.claude/agents/frontend-developer.md
+.claude/agents/fullstack-developer.md
+.claude/agents/javascript-pro.md
+.claude/agents/prompt-engineer.md
+.claude/agents/python-pro.md
+.claude/agents/react-performance-optimizer.md
+.claude/agents/seo-analyzer.md
+.claude/agents/test-engineer.md
+.claude/agents/typescript-pro.md
+.claude/agents/ui-ux-designer.md

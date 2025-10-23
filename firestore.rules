@@ -1,0 +1,11 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Permitir lectura pública de proyectos
+    match /projects/{projectId} {
+      allow read: if true;
+      allow write: if false; // Solo escritura desde consola/admin
+    }
+  }
+}
