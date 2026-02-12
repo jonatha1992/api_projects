@@ -1,6 +1,7 @@
 # API Projects - Tecnofuision IT
 
-API simple para obtener proyectos desde Firestore.
+API para obtener proyectos desde Firestore, incluyendo campos extendidos
+como README, tecnologías y metadata adicional.
 
 ## URLs Disponibles
 
@@ -20,21 +21,37 @@ Ambas URLs retornan exactamente el mismo contenido.
 
 ### GET `/api/projects`
 
-Obtiene todos los proyectos de Firestore.
+Obtiene proyectos de Firestore ordenados por `updatedAt` (descendente).
+
+**Query params opcionales:**
+- `limit` (number): cantidad de proyectos a devolver. Default: `50`, máximo: `200`.
+- `includeReadme` (boolean): incluye o excluye campos de texto de README.
+  - Default: `true`
+  - Si envías `false`, omite: `readme`, `readmeContent`, `readmeMarkdown`, `readmeText`.
 
 **Respuesta exitosa:**
 ```json
 {
   "success": true,
-  "count": 5,
+  "count": 1,
+  "limit": 50,
+  "includeReadme": true,
   "projects": [
     {
       "id": "6zFhXeIswgQvY2iGNq4O",
       "title": "AudiText",
       "description": "Introducing AudioText: your one-stop solution...",
       "image": "https://firebasestorage.googleapis.com/...",
-      "previewLink": "https://github.com/jonatha1992/Auditext",
+      "previewLink": "https://auditext.vercel.app",
       "githubLink": "https://github.com/jonatha1992/Auditext",
+      "technologies": ["React", "Firebase", "Gemini"],
+      "readmeUrl": "https://firebasestorage.googleapis.com/...",
+      "readmeFileName": "README.md",
+      "hasReadme": true,
+      "isDeployed": true,
+      "status": "Producción",
+      "deploymentStatus": "production",
+      "readmeContent": "# AudiText\n...",
       "createdAt": {
         "_seconds": 1761054601,
         "_nanoseconds": 978000000
@@ -50,13 +67,23 @@ Obtiene todos los proyectos de Firestore.
 
 **Campos retornados:**
 - `id` - ID del documento en Firestore
-- `title` - Título del proyecto
-- `description` - Descripción completa
-- `image` - URL de la imagen en Firebase Storage
-- `previewLink` - Link de previsualización
-- `githubLink` - Link del repositorio en GitHub
+- `title`, `description`, `image`, `previewLink`, `githubLink` - Compatibilidad con clientes actuales
+- `technologies` - Array de tecnologías del proyecto (si existe)
+  - También soporta fallback `tecnologies` por compatibilidad.
+- `readmeUrl` - URL del README en Firebase Storage (si existe)
+- `readmeFileName` - Nombre del archivo README (si existe)
+- `hasReadme` - Indica si el proyecto tiene README asociado
+- `isDeployed` - Booleano normalizado del estado de despliegue
+- `status` - Campo original de Firestore (ej: `Desarrollo`, `Producción`)
+- `deploymentStatus` - Estado de despliegue (`production` o `development`)
+  - Prioridad de cálculo: `isDeployed` -> `status/environment/stage` -> inferencia por `previewLink`.
+  - Si no existen, se infiere por `previewLink`:
+    - URL HTTP/HTTPS válida => `production`
+    - Texto sin URL (ej: "Próximamente", "no tiene al momento") => `development`
+- `readme`, `readmeContent`, `readmeMarkdown`, `readmeText` - Se devuelven cuando `includeReadme=true`
 - `createdAt` - Fecha de creación (timestamp de Firestore)
 - `updatedAt` - Fecha de actualización (timestamp de Firestore)
+- Cualquier otro campo adicional guardado en Firestore también se retorna.
 
 ## Estructura del Proyecto
 
@@ -107,7 +134,7 @@ Las reglas de Firestore permiten:
 
 ### JavaScript/Fetch
 ```javascript
-fetch('https://tecnofuision-it.web.app/api/projects')
+fetch('https://tecnofuision-it.web.app/api/projects?limit=20&includeReadme=false')
   .then(response => response.json())
   .then(data => {
     console.log('Total proyectos:', data.count);
@@ -117,14 +144,16 @@ fetch('https://tecnofuision-it.web.app/api/projects')
 
 ### cURL
 ```bash
-curl https://tecnofuision-it.web.app/api/projects
+curl "https://tecnofuision-it.web.app/api/projects?limit=20&includeReadme=true"
 ```
 
 ### Axios
 ```javascript
 import axios from 'axios';
 
-const response = await axios.get('https://tecnofuision-it.web.app/api/projects');
+const response = await axios.get(
+  'https://tecnofuision-it.web.app/api/projects?limit=10&includeReadme=false'
+);
 console.log(response.data.projects);
 ```
 
