@@ -89,6 +89,9 @@ Obtiene proyectos de Firestore ordenados por `updatedAt` (descendente).
 
 ```
 api_projects/
+├── .github/
+│   └── workflows/
+│      └── deploy-firebase.yml  # CI/CD automático (GitHub Actions)
 ├── index.js                    # Cloud Function principal
 ├── package.json                # Dependencias
 ├── firebase.json               # Configuración de Firebase
@@ -123,6 +126,23 @@ firebase deploy --only firestore:rules
 # Desplegar todo
 firebase deploy
 ```
+
+### Deploy automático con GitHub Actions
+
+Este repositorio incluye el workflow `.github/workflows/deploy-firebase.yml`.
+
+- Trigger: `push` a la rama `main` (y ejecución manual con `workflow_dispatch`).
+- Despliega: `functions` y `hosting`.
+- Proyecto Firebase: `tecnofuision-it`.
+
+Para habilitarlo:
+
+1. Crea una cuenta de servicio en Google Cloud con permisos para Firebase deploy.
+2. Descarga la clave JSON.
+3. En GitHub: `Settings` -> `Secrets and variables` -> `Actions`.
+4. Crea el secret `GCP_SA_KEY` con el contenido completo del JSON.
+
+Una vez configurado, cada push a `main` ejecuta el deploy automáticamente.
 
 ## Seguridad
 
