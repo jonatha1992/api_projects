@@ -101,7 +101,7 @@ api_projects/
 
 ## Tecnologías
 
-- **Firebase Cloud Functions** - Serverless functions (Node.js 18)
+- **Firebase Cloud Functions** - Serverless functions (Node.js 20)
 - **Firebase Firestore** - Base de datos NoSQL
 - **Firebase Hosting** - Hosting estático con rewrites
 - **CORS** - Habilitado para todas las origins
