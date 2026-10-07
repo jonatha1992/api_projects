@@ -180,7 +180,6 @@ exports.getProjects = functions.https.onRequest((request, response) => {
 
           const project = {
             id: doc.id,
-            ...data,
             title: typeof data.title === 'string' ? data.title : '',
             description: typeof data.description === 'string' ? data.description : '',
             image: typeof data.image === 'string' ? data.image : '',
@@ -214,9 +213,11 @@ exports.getProjects = functions.https.onRequest((request, response) => {
             updatedAt: data.updatedAt || null
           };
 
-          if (!includeReadme) {
+          if (includeReadme) {
             README_TEXT_FIELDS.forEach(field => {
-              delete project[field];
+              if (typeof data[field] === 'string') {
+                project[field] = data[field];
+              }
             });
           }
 
@@ -229,6 +230,7 @@ exports.getProjects = functions.https.onRequest((request, response) => {
         })
         .slice(0, limit);
 
+      response.set('Cache-Control', 'public, max-age=300, s-maxage=600');
       return response.status(200).json({
         success: true,
         count: projects.length,
@@ -238,10 +240,10 @@ exports.getProjects = functions.https.onRequest((request, response) => {
       });
 
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error fetching projects:', error);
       return response.status(500).json({
         success: false,
-        error: error.message
+        error: 'Internal server error'
       });
     }
   });
