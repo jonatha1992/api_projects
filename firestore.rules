@@ -2,10 +2,15 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Permitir lectura pública de proyectos
+    // Proyectos legibles públicamente; escritura solo desde Firebase Console o Admin SDK
     match /projects/{projectId} {
       allow read: if true;
-      allow write: if false; // Solo escritura desde consola/admin
+      allow write: if false;
+    }
+
+    // Cerrar por defecto cualquier otra colección
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
